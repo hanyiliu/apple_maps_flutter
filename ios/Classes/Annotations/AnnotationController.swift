@@ -34,6 +34,13 @@ extension AppleMapController: AnnotationDelegate {
     public func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if annotation is MKUserLocation {
             return nil
+        }
+        if #available(iOS 11.0, *), let cluster = annotation as? MKClusterAnnotation {
+            mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
+            let v = mapView.dequeueReusableAnnotationView(withIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier, for: cluster) as! MKMarkerAnnotationView
+            v.glyphText = "\(cluster.memberAnnotations.count)"
+            v.canShowCallout = false
+            return v
         } else if let flutterAnnotation = annotation as? FlutterAnnotation {
             return self.getAnnotationView(annotation: flutterAnnotation)
         }
@@ -245,6 +252,10 @@ extension AppleMapController: AnnotationDelegate {
             pinAnnotationView = MKPinAnnotationView.init(annotation: annotation, reuseIdentifier: id)
         }
         pinAnnotationView.layer.zPosition = annotation.zIndex
+        
+        if #available(iOS 11.0, *) {
+            pinAnnotationView.clusteringIdentifier = annotation.clusterId
+        }
 
         if let hueColor: Double = annotation.icon.hueColor {
             pinAnnotationView.pinTintColor = UIColor.init(hue: hueColor, saturation: 1, brightness: 1, alpha: 1)
@@ -258,6 +269,7 @@ extension AppleMapController: AnnotationDelegate {
         self.mapView.register(FlutterMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: id)
         let markerAnnotationView: FlutterMarkerAnnotationView = self.mapView.dequeueReusableAnnotationView(withIdentifier: id, for: annotation) as! FlutterMarkerAnnotationView
         markerAnnotationView.stickyZPosition = annotation.zIndex
+        markerAnnotationView.clusteringIdentifier = annotation.clusterId
 
         if let hueColor: Double = annotation.icon.hueColor {
             markerAnnotationView.markerTintColor = UIColor.init(hue: hueColor, saturation: 1, brightness: 1, alpha: 1)
@@ -276,6 +288,9 @@ extension AppleMapController: AnnotationDelegate {
         }
         annotationView.image = annotation.icon.image
         annotationView.stickyZPosition = annotation.zIndex
+        if #available(iOS 11.0, *) {
+            annotationView.clusteringIdentifier = annotation.clusterId
+        }
         return annotationView
     }
 

@@ -155,6 +155,7 @@ class Annotation {
     this.visible = true,
     this.zIndex = -1,
     this.onDragEnd,
+    this.clusterId,
   }) : assert(0.0 <= alpha && alpha <= 1.0);
 
   /// Uniquely identifies a [Annotation].
@@ -186,6 +187,9 @@ class Annotation {
   /// Geographical location of the annotation.
   final LatLng position;
 
+  /// Optional cluster identifier. When set, MapKit may cluster annotations with the same id.
+  final String? clusterId;
+
   /// Callbacks to receive tap events for annotations placed on this map.
   final VoidCallback? onTap;
 
@@ -215,6 +219,7 @@ class Annotation {
     double? zIndexParam,
     VoidCallback? onTapParam,
     ValueChanged<LatLng>? onDragEndParam,
+    String? clusterIdParam,
   }) {
     return Annotation(
       annotationId: annotationId,
@@ -228,6 +233,7 @@ class Annotation {
       visible: visibleParam ?? visible,
       zIndex: zIndexParam ?? zIndex,
       onDragEnd: onDragEndParam ?? onDragEnd,
+      clusterId: clusterIdParam ?? clusterId,
     );
   }
 
@@ -249,6 +255,7 @@ class Annotation {
     addIfPresent('visible', visible);
     addIfPresent('position', position._toJson());
     addIfPresent('zIndex', zIndex);
+    addIfPresent('clusterId', clusterId);
     return json;
   }
 
