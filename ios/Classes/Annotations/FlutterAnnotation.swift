@@ -23,6 +23,7 @@ class FlutterAnnotation: NSObject, MKAnnotation {
     var zIndex: Double = -1
     var calloutOffset: Offset = Offset()
     var icon: AnnotationIcon = AnnotationIcon.init()
+    var clusterId: String?
     var selectedProgrammatically: Bool = false
     
     public init(fromDictionary annotationData: Dictionary<String, Any>, registrar: FlutterPluginRegistrar) {
@@ -35,6 +36,7 @@ class FlutterAnnotation: NSObject, MKAnnotation {
         self.subtitle = infoWindow["snippet"] as? String
         self.infoWindowConsumesTapEvents = infoWindow["consumesTapEvents"] as? Bool ?? false
         self.id = annotationData["annotationId"] as? String
+        self.clusterId = annotationData["clusterId"] as? String
         self.isVisible = annotationData["visible"] as? Bool
         self.isDraggable = annotationData["draggable"] as? Bool
         if let zIndex = annotationData["zIndex"] as? Double {
